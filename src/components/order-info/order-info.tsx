@@ -1,23 +1,48 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../services/reducers';
+import { useParams, useLocation } from 'react-router-dom';
+import { getOrderThunk } from '../../services/reducers/order';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const dispatch = useDispatch();
+  const { number } = useParams<{ number: string }>();
+  const location = useLocation();
 
-  const ingredients: TIngredient[] = [];
+  const { ingredients } = useSelector((state: RootState) => state.ingredients);
+  const { currentOrder, currentOrderRequest } = useSelector(
+    (state: RootState) => state.order
+  );
+  const { feeds } = useSelector((state: RootState) => state.order);
+  const { userOrders } = useSelector((state: RootState) => state.order);
 
-  /* Готовим данные для отображения */
+  const orderData = useMemo(() => {
+    if (currentOrder) return currentOrder;
+
+    if (location.pathname.includes('/feed') && feeds) {
+      return (
+        feeds.orders.find((order) => order.number === Number(number)) || null
+      );
+    }
+
+    if (location.pathname.includes('/profile/orders')) {
+      return (
+        userOrders.find((order) => order.number === Number(number)) || null
+      );
+    }
+
+    return null;
+  }, [currentOrder, feeds, userOrders, location.pathname, number]);
+
+  useEffect(() => {
+    if (!orderData && number) {
+      dispatch(getOrderThunk(Number(number)) as any);
+    }
+  }, [dispatch, orderData, number]);
+
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -59,7 +84,7 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (currentOrderRequest || !orderInfo) {
     return <Preloader />;
   }
 
