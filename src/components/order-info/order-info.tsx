@@ -2,7 +2,7 @@ import { FC, useEffect, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from '../../services/store';
 import { RootState } from '../../services/reducers';
 import { useParams, useLocation } from 'react-router-dom';
 import { getOrderThunk } from '../../services/reducers/order';

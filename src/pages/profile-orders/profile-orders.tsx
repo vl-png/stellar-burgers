@@ -1,6 +1,6 @@
 import { ProfileOrdersUI } from '@ui-pages';
 import { FC, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from '../../services/store';
 import { RootState } from '../../services/reducers';
 import { getUserOrdersThunk } from '../../services/actions/order';
 import { Preloader } from '@ui';

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ProfileMenuUI } from '@ui';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from '../../services/store';
 import { logoutUserThunk } from '../../services/actions/user';
 import { useNavigate } from 'react-router-dom';
 

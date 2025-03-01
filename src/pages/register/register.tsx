@@ -1,6 +1,6 @@
 import { FC, SyntheticEvent, useState, useEffect } from 'react';
 import { RegisterUI } from '@ui-pages';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from '../../services/store';
 import { registerUserThunk } from '../../services/actions/user';
 import { RootState } from '../../services/reducers';
 import { useNavigate } from 'react-router-dom';

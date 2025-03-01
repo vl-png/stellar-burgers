@@ -18,17 +18,30 @@ export const constructorSlice = createSlice({
   name: 'constructor',
   initialState,
   reducers: {
-    addIngredient: (state, action: PayloadAction<TIngredient>) => {
-      const ingredient = action.payload;
-      if (ingredient.type === 'bun') {
-        state.bun = ingredient;
-      } else {
-        state.ingredients.push({
-          ...ingredient,
-          id: uuidv4()
-        });
+    addIngredient: {
+      prepare: (ingredient: TIngredient) => {
+        if (ingredient.type === 'bun') {
+          return { payload: ingredient };
+        }
+        return {
+          payload: {
+            ...ingredient,
+            id: uuidv4()
+          }
+        };
+      },
+      reducer: (
+        state,
+        action: PayloadAction<TIngredient | TConstructorIngredient>
+      ) => {
+        const ingredient = action.payload;
+        if (ingredient.type === 'bun') {
+          state.bun = ingredient as TIngredient;
+        } else {
+          state.ingredients.push(ingredient as TConstructorIngredient);
+        }
+        state.totalPrice = calculateTotalPrice(state.bun, state.ingredients);
       }
-      state.totalPrice = calculateTotalPrice(state.bun, state.ingredients);
     },
     removeIngredient: (state, action: PayloadAction<string>) => {
       state.ingredients = state.ingredients.filter(

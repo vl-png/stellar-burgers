@@ -1,5 +1,5 @@
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from '../../services/store';
 import { useEffect } from 'react';
 
 import {
@@ -25,12 +25,11 @@ import {
 } from '@components';
 import { getIngredientsThunk } from '../../services/actions/ingredients';
 import { getUserThunk } from '../../services/actions/user';
-import { AppDispatch } from '../../services/store';
 
 const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
 
   const locationState = location.state as { background?: Location };
   const background = locationState && locationState.background;

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, FC, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useSelector } from 'react-redux';
+import { useSelector } from '../../services/store';
 import { RootState } from '../../services/reducers';
 
 import { TTabMode } from '@utils-types';

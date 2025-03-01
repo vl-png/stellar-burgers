@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from '../../services/store';
 import { useNavigate } from 'react-router-dom';
 import { BurgerConstructorUI } from '@ui';
 import { RootState } from '../../services/reducers';
@@ -10,7 +10,7 @@ import {
 import { AppDispatch } from '../../services/store';
 
 export const BurgerConstructor: FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { bun, ingredients, totalPrice } = useSelector(
