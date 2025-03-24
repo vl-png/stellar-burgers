@@ -1,3 +1,12 @@
+import {
+  INGREDIENT_MAIN,
+  BURGER_BUN_TOP,
+  BURGER_BUN_BOTTOM,
+  BURGER_INGREDIENTS,
+  MODAL,
+  ORDER_BUTTON
+} from '../support/selectors';
+
 describe('Проверка работы страницы конструктора', () => {
   beforeEach(() => {
     cy.intercept('GET', '/api/ingredients', { fixture: 'ingredients.json' }).as(
@@ -8,48 +17,26 @@ describe('Проверка работы страницы конструктор�
   });
 
   it('Проверка добавления ингредиентов в конструктор', () => {
-    cy.get('[data-cy="data-bun"]').should('exist').find('button').click();
-    cy.get('[data-cy="data-sauce"]').should('exist').find('button').click();
-    cy.get('[data-cy="data-main"]').should('exist').find('button').click();
-
-    cy.get('[data-cy="burger-bun-up"]')
-      .contains('Краторная булка N-200i')
-      .should('exist');
-    cy.get('[data-cy="burger-bun-down"]')
-      .contains('Краторная булка N-200i')
-      .should('exist');
-    cy.get('[data-cy="burger-ingredients"]')
-      .contains('Соус Spicy-X')
-      .should('exist');
-    cy.get('[data-cy="burger-ingredients"]')
-      .contains('Филе Люминесцентного тетраодонтимформа')
-      .should('exist');
+    cy.addIngredients();
+    cy.checkIngredients();
   });
 
   it('Проверка открытия модального окна ингредиента', () => {
-    cy.get('[data-cy="data-main"]').should('exist').click();
+    cy.openIngredientModal(INGREDIENT_MAIN);
 
-    cy.get('[data-cy="modal"]').should('be.visible');
-
-    cy.get('[data-cy="modal"]')
+    cy.get(MODAL)
       .contains('Филе Люминесцентного тетраодонтимформа')
       .should('exist');
-
-    cy.get('[data-cy="close-btn"]').should('exist');
   });
 
   it('Проверка закрытия модального окна ингредиента по нажатию на кнопку "Закрыть" ', () => {
-    cy.get('[data-cy="data-main"]').should('exist').click();
-
-    cy.get('[data-cy="close-btn"]').should('exist').click();
-    cy.get('[data-cy="modal"]').should('not.exist');
+    cy.openIngredientModal(INGREDIENT_MAIN);
+    cy.closeModalWithButton();
   });
 
   it('Проверка закрытия модального окна ингредиента по нажатию на оверлей', () => {
-    cy.get('[data-cy="data-main"]').should('exist').click();
-
-    cy.get('[data-cy="overlay"]').should('exist').click({ force: true });
-    cy.get('[data-cy="modal"]').should('not.exist');
+    cy.openIngredientModal(INGREDIENT_MAIN);
+    cy.closeModalWithOverlay();
   });
 });
 
@@ -81,42 +68,27 @@ describe('Проверка создания заказа', () => {
   });
 
   it('Проверка создания заказа, закрытия модального окна и очистки конструктора', () => {
-    cy.get('[data-cy="data-bun"]').should('exist').find('button').click();
-    cy.get('[data-cy="data-sauce"]').should('exist').find('button').click();
-    cy.get('[data-cy="data-main"]').should('exist').find('button').click();
+    cy.addIngredients();
+    cy.checkIngredients();
 
-    cy.get('[data-cy="burger-bun-up"]')
-      .contains('Краторная булка N-200i')
-      .should('exist');
-    cy.get('[data-cy="burger-bun-down"]')
-      .contains('Краторная булка N-200i')
-      .should('exist');
-    cy.get('[data-cy="burger-ingredients"]')
-      .contains('Соус Spicy-X')
-      .should('exist');
-    cy.get('[data-cy="burger-ingredients"]')
-      .contains('Филе Люминесцентного тетраодонтимформа')
-      .should('exist');
-
-    cy.get('[data-cy="order-burger"]').find('button').should('exist').click();
+    cy.createOrder();
     cy.wait('@postOrder');
 
-    cy.get('[data-cy="modal"]').should('be.visible').contains('71074');
-    cy.get('[data-cy="modal"]')
+    cy.get(MODAL).should('be.visible').contains('71074');
+    cy.get(MODAL)
       .find('button')
       .should('exist')
       .click()
       .should('not.exist');
 
-    cy.get('[data-cy="burger-bun-up"]').should('not.exist');
+    cy.get(BURGER_BUN_TOP).should('not.exist');
+    cy.get(BURGER_BUN_BOTTOM).should('not.exist');
 
-    cy.get('[data-cy="burger-bun-down"]').should('not.exist');
-
-    cy.get('[data-cy="burger-ingredients"]')
+    cy.get(BURGER_INGREDIENTS)
       .contains('Выберите начинку')
       .should('exist');
 
-    cy.get('[data-cy="order-burger"]')
+    cy.get(ORDER_BUTTON)
       .find('p')
       .should('exist')
       .contains('0')
